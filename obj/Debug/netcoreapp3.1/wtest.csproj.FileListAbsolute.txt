@@ -1,0 +1,14 @@
+D:\Projects\wtest\bin\Debug\netcoreapp3.1\wtest.exe
+D:\Projects\wtest\bin\Debug\netcoreapp3.1\wtest.deps.json
+D:\Projects\wtest\bin\Debug\netcoreapp3.1\wtest.runtimeconfig.json
+D:\Projects\wtest\bin\Debug\netcoreapp3.1\wtest.runtimeconfig.dev.json
+D:\Projects\wtest\bin\Debug\netcoreapp3.1\wtest.dll
+D:\Projects\wtest\bin\Debug\netcoreapp3.1\wtest.pdb
+D:\Projects\wtest\obj\Debug\netcoreapp3.1\wtest.AssemblyInfoInputs.cache
+D:\Projects\wtest\obj\Debug\netcoreapp3.1\wtest.AssemblyInfo.cs
+D:\Projects\wtest\obj\Debug\netcoreapp3.1\wtest.csproj.CoreCompileInputs.cache
+D:\Projects\wtest\obj\Debug\netcoreapp3.1\wtest.dll
+D:\Projects\wtest\obj\Debug\netcoreapp3.1\wtest.pdb
+D:\Projects\wtest\obj\Debug\netcoreapp3.1\wtest.genruntimeconfig.cache
+D:\Projects\wtest\obj\Debug\netcoreapp3.1\wtest.csproj.AssemblyReference.cache
+D:\Projects\wtest\obj\Debug\netcoreapp3.1\wtest.GeneratedMSBuildEditorConfig.editorconfig
