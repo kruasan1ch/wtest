@@ -3,7 +3,7 @@ using System.Linq;
 using System;
 namespace wtest.classes
 {
-    public class TableConstructer
+    public class TableConstructor
     {   
         private int[] data;
         private int Length;
@@ -11,8 +11,8 @@ namespace wtest.classes
         public List<LogisticItem> negatives {get; set;}
         public List<LogisticItem> positives {get; set;}
         private int invertible;
-        private List<Rout> filled;
-        public TableConstructer(int[] data){
+        public List<Rout> filled {get; set;}
+        public TableConstructor(int[] data){
             this.data = data;
             Length = data.Length;
             negatives = new List<LogisticItem>();
@@ -64,7 +64,7 @@ namespace wtest.classes
             for(int i = 0; i < positives.Count; i++){
                 routs[i] = new Rout[negatives.Count];
                 for(int j = 0; j < negatives.Count; j++){
-                    routs[i][j] = new Rout(i,j,findClosestPath(negatives.ElementAt(j).index, positives.ElementAt(i).index, Length));
+                    routs[i][j] = new Rout(j,i,findClosestPath(negatives.ElementAt(j).index, positives.ElementAt(i).index, Length));
                 }
             }  
         }
@@ -144,7 +144,6 @@ namespace wtest.classes
                     }
                 }
             }
-            Console.WriteLine($"Invertible n+m-1: {inv}, invertible count: {invertible}");
         } 
     }
 }

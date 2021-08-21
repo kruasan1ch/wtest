@@ -9,7 +9,6 @@ namespace wtest.classes
         private Rout[][] routs;
         private List<LogisticItem> negatives;
         private List<LogisticItem> positives;
-        private int invertible;
         private List<Rout> filled;
         private void printRout(){
             for(int i = 0; i < routs.Length; i++){
@@ -31,27 +30,23 @@ namespace wtest.classes
             return result;
         }
         public void makeEqual(int[] data){
-            TableConstructer table = new TableConstructer(data);
+            TableConstructor table = new TableConstructor(data);
             table.CalculateInitialPlan();
             routs = table.routs;
-            printRout();
-            Console.WriteLine($"Result: {CountResult()}");
-
             negatives = table.negatives;
             positives = table.positives;
-            int?[] profitX = new int?[negatives.Count()];
-            int?[] profitY = new int?[positives.Count()];
-            profitY[0] = 0;
+            printRout();
+            filled = table.filled;
+            Optimizer optimizer = new Optimizer(routs);
+            while(optimizer.IsOptimal() == false){
+                routs = optimizer.Optimize();
+                optimizer.routs = routs;
+                Console.WriteLine($"Result: {CountResult()}");
+                printRout();
+            }
+            Console.WriteLine("Plan is optimal");
             
-            
-            Console.WriteLine("\nx");
-            profitX.ToList().ForEach(i => Console.WriteLine(i));
-            Console.WriteLine("\ny");
-            profitY.ToList().ForEach(i => Console.WriteLine(i));
-
-        }
-        private static bool findColumn(Rout rout, int x, int y){
-            return rout.y == y && rout.x != x;
+            Console.WriteLine($"Result: {CountResult()}");
         }
     }
 }
