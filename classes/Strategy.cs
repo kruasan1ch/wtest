@@ -10,7 +10,7 @@ namespace wtest.classes
         private Rout[][] routs;
         private List<LogisticItem> negatives;
         private List<LogisticItem> positives;
-        private List<Rout> filled;
+        private List<Point> filled;
         private void printRout(){
             for(int i = 0; i < routs.Length; i++){
                 for(int j = 0; j < routs[i].Length; j++){
@@ -36,19 +36,17 @@ namespace wtest.classes
             routs = table.routs;
             negatives = table.negatives;
             positives = table.positives;
-            printRout();
+            
             filled = table.filled;
-            List<Point> Points = new List<Point>();
-            foreach(var point in filled){
-                Points.Add(point.ToPoint());
-            }
-            Optimizer optimizer = new Optimizer(routs, Points);
+            Optimizer optimizer = new Optimizer(routs);
+            printRout();
+            Console.WriteLine("________");
             while(optimizer.IsOptimal() == false){
-                //routs = optimizer.Optimize();
-                optimizer.Optimize();
-                Console.WriteLine($"Result: {CountResult()}");
-                break;
+                routs = optimizer.Optimize();
             }
+        
+            
+            printRout();
             Console.WriteLine("Plan is optimal");
             
             Console.WriteLine($"Result: {CountResult()}");

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Drawing;
 namespace wtest.classes
 {
     public class TableConstructor
@@ -11,13 +12,14 @@ namespace wtest.classes
         public List<LogisticItem> negatives {get; set;}
         public List<LogisticItem> positives {get; set;}
         private int invertible;
-        public List<Rout> filled {get; set;}
+
+        public List<Point> filled {get; set;}
         public TableConstructor(int[] data){
             this.data = data;
             Length = data.Length;
             negatives = new List<LogisticItem>();
             positives = new List<LogisticItem>();
-            filled = new List<Rout>();
+            filled = new List<Point>();
             invertible = 0;
         }
         private int[] CalculateSubs(){
@@ -68,6 +70,16 @@ namespace wtest.classes
                 }
             }  
         }
+        public static List<Point> findFilled(Rout[][] source){
+            List<Point> result = new List<Point>();
+            foreach(var row in source){
+                List<Rout> ToFind = row.ToList().FindAll(n => n.goods != null);
+                foreach(var item in ToFind){
+                    result.Add(item.ToPoint());
+                }
+            }
+            return result;
+        }
         private Rout[] MinPrice(int index, Rout[] supplyLine){
             Rout[] result = supplyLine;
             int minIndex = 0;
@@ -96,9 +108,6 @@ namespace wtest.classes
                 result[minIndex].goods = null;
             }
             invertible++;
-            if(result[minIndex].goods != null){
-                filled.Add(result[minIndex]);
-            }
             if(positives[index].value == 0){
                 foreach (var rout in result){
                     if (rout.goods < 0){
@@ -114,6 +123,38 @@ namespace wtest.classes
                     routs[i] = MinPrice(i, routs[i]);
                 }
             }
+        }
+        public static Rout[][] fixDegeneracy(Rout[][] routs, int invertibles){
+            int inv = routs.Length + routs[0].Length -1;
+            int inv_real = invertibles;
+            Console.WriteLine(inv + " " + inv_real);
+            for(int i = 0; i < routs.Length; i++){
+                if(routs[i].Any(n => n.goods == 0)){
+                    for(int j = 0; j < routs[i].Length; j++){
+                        if(routs[i][j].goods == 0){
+                            routs[i][j].goods = null;
+                            inv_real--;
+                        }
+                    }
+                }
+            }
+
+            if(inv > inv_real){
+                for(int i = 0; i< routs.Length; i++){
+                    for(int j = 0; j < routs[i].Length; j++){
+                        if(inv_real == inv){
+                            break;
+                        }
+                        if(routs[i][j].goods != null){
+                            continue;
+                        } else {
+                            inv_real++;
+                            routs[i][j].goods = 0;
+                        }
+                    }
+                }
+            }
+            return routs;
         }
         public void CalculateInitialPlan(){
             CalculateRouts();
@@ -131,19 +172,12 @@ namespace wtest.classes
                 RecalculateRout();
             }
             while(negatives.Any(i => i.value > 0));
+
+            filled = findFilled(routs);
+            routs = fixDegeneracy(routs, filled.Count());
+            filled = findFilled(routs);
             
-            int inv = negatives.Count() + positives.Count() - 1;
-            if(inv > invertible){
-                foreach (var rout in filled)
-                {
-                    if(rout.x +1 < routs[rout.y].Length && routs[rout.y][rout.x +1].goods == null){
-                        routs[rout.y][rout.x + 1].goods = 0;
-                        invertible++;
-                        if(invertible == inv)
-                            break;
-                    }
-                }
-            }
+            
         } 
     }
 }
