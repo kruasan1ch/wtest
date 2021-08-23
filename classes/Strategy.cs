@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using System;
+using System.Drawing;
 namespace wtest.classes
 {
     public class Strategy
@@ -37,12 +38,16 @@ namespace wtest.classes
             positives = table.positives;
             printRout();
             filled = table.filled;
-            Optimizer optimizer = new Optimizer(routs);
+            List<Point> Points = new List<Point>();
+            foreach(var point in filled){
+                Points.Add(point.ToPoint());
+            }
+            Optimizer optimizer = new Optimizer(routs, Points);
             while(optimizer.IsOptimal() == false){
-                routs = optimizer.Optimize();
-                optimizer.routs = routs;
+                //routs = optimizer.Optimize();
+                optimizer.Optimize();
                 Console.WriteLine($"Result: {CountResult()}");
-                printRout();
+                break;
             }
             Console.WriteLine("Plan is optimal");
             

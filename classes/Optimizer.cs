@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Drawing;
 namespace wtest.classes
 {
     public class Optimizer
@@ -10,10 +11,14 @@ namespace wtest.classes
         private int?[,] potentials;
         public Rout[][] routs {get; set;}
         private int MaxValue;
-        private Index MaxIndex;
-        List<Vertex> loop;
-        public Optimizer(Rout[][] routs){
+        private Point MaxIndex;
+        private List<Vertex> loop;
+        public List<Point> filled {get; set;}
+
+        public Optimizer(Rout[][] routs, List<Point> filled){
             this.routs = routs;
+            MaxValue = int.MinValue;
+            this.filled = filled;
         }
         private void CalculatePotentials(){
             potentialsY = new int?[routs.Length];
@@ -51,13 +56,13 @@ namespace wtest.classes
             }
             bool result;
             MaxValue = int.MinValue;
-            MaxIndex = new Index();
+            MaxIndex = new Point();
             for(int i = 0; i < routs.Length; i++){
                 for(int j = 0; j < routs[0].Length; j++){
                     if(potentials[i,j] > MaxValue){
                         MaxValue = (int) potentials[i,j];
-                        MaxIndex.x = j;
-                        MaxIndex.y = i;
+                        MaxIndex.X = j;
+                        MaxIndex.Y = i;
                     }
                 }
             }
@@ -70,27 +75,7 @@ namespace wtest.classes
             Console.WriteLine(MaxIndex.ToString());
             return result;
         }
-    private List<Rout> CheckHorizontaly(int x, int y){
-        List<Rout> neighbors = new List<Rout>(); 
-        for(int i =0; i < routs[y].Length; i++){
-            Rout selected = routs[y][i];
-            if(selected.goods > 0 && selected.x != x){
-                neighbors.Add(selected);
-            }
-        }
-        return neighbors;
-    }
-     private List<Rout> CheckVerticaly(int x, int y){
-        List<Rout> neighbors = new List<Rout>(); 
-        for(int i =0; i < routs.Length; i++){
-            Rout selected = routs[i][x];
-            if(selected.goods > 0 && selected.y != y){
-                neighbors.Add(selected);
-            }
-        }
-        return neighbors;
-     }
-    private List<Rout> GetNeighbors(int x, int y){
+        private List<Rout> GetNeighbors(int x, int y){
         List<Rout> neighbors = CheckHorizontaly(x,y);
         neighbors.AddRange(CheckVerticaly(x,y));
         neighbors.OrderByDescending(n => (int) n.goods).ToList();
@@ -136,17 +121,37 @@ namespace wtest.classes
             }
         }
     }
+        private List<Rout> CheckHorizontaly(int x, int y){
+        List<Rout> neighbors = new List<Rout>(); 
+        for(int i =0; i < routs[y].Length; i++){
+            Rout selected = routs[y][i];
+            if(selected.goods > 0 && selected.x != x){
+                neighbors.Add(selected);
+            }
+        }
+        return neighbors;
+    }
+     private List<Rout> CheckVerticaly(int x, int y){
+        List<Rout> neighbors = new List<Rout>(); 
+        for(int i =0; i < routs.Length; i++){
+            Rout selected = routs[i][x];
+            if(selected.goods > 0 && selected.y != y){
+                neighbors.Add(selected);
+            }
+        }
+        return neighbors;
+     }
     public void CalculateLoop(){
         loop = new List<Vertex>();
-        Vertex Head = new Vertex(routs[MaxIndex.y][MaxIndex.x],true);
+        Vertex Head = new Vertex(routs[MaxIndex.Y][MaxIndex.X],true);
         loop.Add(Head);
-        List<Rout> neighbors = GetNeighbors(MaxIndex.x, MaxIndex.y);
+        List<Rout> neighbors = GetNeighbors(MaxIndex.X, MaxIndex.Y);
         
         foreach(var neighbor in neighbors){
             loop = new List<Vertex>();
             loop.Add(Head);
             Vertex vertex = new Vertex(neighbor,false);
-            if(MaxIndex.x == neighbor.x){
+            if(MaxIndex.X == neighbor.x){
                 vertex.isRow = false;
             } else {
                 vertex.isRow = true;
@@ -186,20 +191,19 @@ namespace wtest.classes
         }  
         return routs;
     }
-
-    }
-    public struct Vertex{
-        public Rout rout {get;}
-        public bool isPositive {get;}
-        public bool? isRow {get; set;}
-        public Vertex(Rout rout, bool positive){
-            this.rout = rout;
-            this.isPositive = positive;
-            this.isRow = null;
-        }
-        public override string ToString()
-        {
-            return $"Rout: {rout.ToString()}, positive: {isPositive}, is row: {isRow}";
+        public struct Vertex{
+            public Rout rout {get;}
+            public bool isPositive {get;}
+            public bool? isRow {get; set;}
+            public Vertex(Rout rout, bool positive){
+                this.rout = rout;
+                this.isPositive = positive;
+                this.isRow = null;
+            }
+            public override string ToString()
+            {
+                return $"Rout: {rout.ToString()}, positive: {isPositive}, is row: {isRow}";
+            }
         }
     }
 }
